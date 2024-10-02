@@ -526,7 +526,7 @@ object NumericDeserializer : JsonDeserializer<Numeric>() {
 object PermissionDeserializer : JsonDeserializer<Permission>() {
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): Permission {
         val node = p.readValueAsTree<ObjectNode>()
-        return Permission(node.get("name").asText(), node.get("payload").asStringOrNull())
+        return Permission(node.get("name").asText(), node.get("payload").toString())
     }
 }
 
@@ -1203,10 +1203,7 @@ object NumericSerializer : JsonSerializer<Numeric>() {
  */
 object PermissionSerializer : JsonSerializer<Permission>() {
     override fun serialize(value: Permission, gen: JsonGenerator, serializers: SerializerProvider) {
-        val payload = when (value.payload) {
-            null -> null
-            else -> JSON_SERDE.readTree(value.payload)
-        }
+        val payload = JSON_SERDE.readTree(value.payload)
 
         gen.writeStartObject()
         gen.writeObjectField(Permission::name.name, value.name)
